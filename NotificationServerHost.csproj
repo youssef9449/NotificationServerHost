@@ -63,8 +63,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SignalRServer\Server\NotificationHubLibrary.csproj">
-      <Project>{a67121da-fc2d-4aed-a5ac-0fc869bd0289}</Project>
+    <ProjectReference Include="..\NotificationHubLibrary\NotificationHubLibrary.csproj">
+      <Project>{a464b161-9840-4bf5-9bc1-d4ffceb910f0}</Project>
       <Name>NotificationHubLibrary</Name>
     </ProjectReference>
   </ItemGroup>
