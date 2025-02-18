@@ -21,6 +21,8 @@ class Program
         string url = $"http://{serverIP}:8080";
 
         Console.WriteLine($"SignalR server URL: {url}");
+        Console.Write("Press any key to exit....");
+        Console.ReadKey();
         // Continue with your SignalR connection logic here
     }
 
