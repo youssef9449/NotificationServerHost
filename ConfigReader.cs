@@ -7,9 +7,8 @@ public static class ConfigReader
     {
         try
         {
-            // Path to the config.ini file in the same directory as the executable
+            // Look for config.ini in the executable directory
             string configFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.ini");
-
             if (File.Exists(configFilePath))
             {
                 string[] lines = File.ReadAllLines(configFilePath);
@@ -28,7 +27,6 @@ public static class ConfigReader
                     }
                 }
 
-                // Validate the values
                 if (!string.IsNullOrEmpty(serverIP) && !string.IsNullOrEmpty(port))
                 {
                     return (serverIP, port);
