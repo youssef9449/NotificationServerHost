@@ -15,8 +15,8 @@ namespace NotificationServerHost
         static IHubContext hubContext;
         private static readonly TimeSpan PollingInterval = TimeSpan.FromSeconds(5);
         private static CancellationTokenSource _cancellationTokenSource;
-        //public static string connectionString = "Data Source=192.168.1.9;Initial Catalog=Users;User ID=sa;Password=123;MultipleActiveResultSets=True;";
-        public static string connectionString = "Data Source=192.168.1.114;Initial Catalog=Users;Trusted_Connection=True;MultipleActiveResultSets=True;";
+        public static string connectionString = "Data Source=192.168.1.9;Initial Catalog=Users;User ID=sa;Password=123;MultipleActiveResultSets=True;";
+       // public static string connectionString = "Data Source=192.168.1.114;Initial Catalog=Users;Trusted_Connection=True;MultipleActiveResultSets=True;";
 
 
         static async Task Main(string[] args)
