@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
@@ -15,9 +14,8 @@ namespace NotificationServerHost
         static IHubContext hubContext;
         private static readonly TimeSpan PollingInterval = TimeSpan.FromSeconds(5);
         private static CancellationTokenSource _cancellationTokenSource;
-        public static string connectionString = "Data Source=192.168.1.9;Initial Catalog=Users;User ID=sa;Password=123;MultipleActiveResultSets=True;";
-       // public static string connectionString = "Data Source=192.168.1.114;Initial Catalog=Users;Trusted_Connection=True;MultipleActiveResultSets=True;";
-
+       // public static string connectionString = "Data Source=192.168.1.9;Initial Catalog=Users;User ID=sa;Password=123;MultipleActiveResultSets=True;";
+        public static string connectionString = "Data Source=192.168.1.114;Initial Catalog=Users;Trusted_Connection=True;"; 
 
         static async Task Main(string[] args)
         {
@@ -33,13 +31,11 @@ namespace NotificationServerHost
 
             try
             {
-                // Start the SignalR server
                 using (WebApp.Start(url))
                 {
                     hubContext = GlobalHost.ConnectionManager.GetHubContext<NotificationHub>();
                     Console.WriteLine("SignalR Server started at " + url);
 
-                    // Start polling tasks for notifications
                     Task pollNotificationTask = PollNotificationLogAsync(_cancellationTokenSource.Token);
                     Task pollRequestNotificationTask = PollRequestNotificationLogAsync(_cancellationTokenSource.Token);
 
@@ -67,7 +63,6 @@ namespace NotificationServerHost
             }
         }
 
-        // Polls the Notifications table for new messages.
         static async Task PollNotificationLogAsync(CancellationToken cancellationToken)
         {
             int errorBackoffMs = 1000;
@@ -89,7 +84,7 @@ namespace NotificationServerHost
                                 int receiverID = reader.GetInt32(reader.GetOrdinal("ReceiverID"));
                                 string messageText = reader.GetString(reader.GetOrdinal("MessageText"));
 
-                                bool notificationSent = await NotifyClients(messageText, receiverID);
+                                bool notificationSent = await NotifyGeneralClients(messageText, receiverID);
                                 if (notificationSent)
                                 {
                                     bool marked = await MarkNotificationAsNotified(connection, notificationID, "Notifications");
@@ -117,7 +112,6 @@ namespace NotificationServerHost
             }
         }
 
-        // Polls the RequestNotificationLog table for new requests.
         static async Task PollRequestNotificationLogAsync(CancellationToken cancellationToken)
         {
             int errorBackoffMs = 1000;
@@ -139,7 +133,7 @@ namespace NotificationServerHost
                                 int receiverID = reader.GetInt32(reader.GetOrdinal("ReceiverID"));
                                 string requestReason = reader.GetString(reader.GetOrdinal("RequestReason"));
 
-                                bool notificationSent = await NotifyClients(requestReason, receiverID);
+                                bool notificationSent = await NotifyGeneralClients(requestReason, receiverID);
                                 if (notificationSent)
                                 {
                                     bool marked = await MarkNotificationAsNotified(connection, notificationID, "RequestNotificationLog");
@@ -167,8 +161,7 @@ namespace NotificationServerHost
             }
         }
 
-        // Uses the hub context to send a notification to a specific user.
-        static async Task<bool> NotifyClients(string message, int receiverID)
+        static async Task<bool> NotifyGeneralClients(string message, int receiverID)
         {
             try
             {
@@ -177,7 +170,8 @@ namespace NotificationServerHost
                 {
                     await Task.Run(() =>
                     {
-                        hubContext.Clients.Clients(connectionIDs).receiveNotification(message);
+                        hubContext.Clients.Clients(connectionIDs).receiveGeneralNotification(message);
+                        // Alternatively, could call hubContext.Clients.Invoke("SendNotification", new List<int> { receiverID }, message, null, false, false);
                     });
                     return true;
                 }
@@ -194,7 +188,6 @@ namespace NotificationServerHost
             }
         }
 
-        // Marks a notification as seen in the database.
         static async Task<bool> MarkNotificationAsNotified(SqlConnection connection, int notificationID, string tableName)
         {
             try
@@ -213,7 +206,6 @@ namespace NotificationServerHost
             }
         }
 
-        // Basic error logging.
         static void LogError(string message)
         {
             try
