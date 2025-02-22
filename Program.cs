@@ -24,7 +24,7 @@ class Program
             using (WebApp.Start(url))
             {
                 hubContext = GlobalHost.ConnectionManager.GetHubContext<NotificationHub>();
-                Console.WriteLine("SignalR Server started at " + url);
+                Console.WriteLine("Server started at " + url);
                 Console.WriteLine("Press any key to exit...");
                 Console.ReadKey();
             }
