@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNet.SignalR;
 using Microsoft.Owin.Hosting;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 
 class Program
 {
     static IHubContext hubContext;
-    public static string connectionString = "Data Source=192.168.1.9;Initial Catalog=Users;User ID=sa;Password=123;MultipleActiveResultSets=True;";
+    //public static string connectionString = "Data Source=192.168.1.9;Initial Catalog=Users;User ID=sa;Password=123;MultipleActiveResultSets=True;";
+    public static string connectionString = "Data Source=192.168.1.11;Initial Catalog=Users;Trusted_Connection=True;";
 
     static async Task Main(string[] args)
     {
@@ -37,6 +39,18 @@ class Program
 
     static void LogError(string message)
     {
-        Console.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} [ERROR] : {message}");
+        string logFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log.ini");
+        string logMessage = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} [ERROR] : {message}{Environment.NewLine}";
+        try
+        {
+            // Append the error message to log.ini. The file is created if it doesn't exist.
+            File.AppendAllText(logFilePath, logMessage);
+        }
+        catch (Exception ex)
+        {
+            // If logging fails, write the error to the console.
+            Console.WriteLine("Failed to write log: " + ex.Message);
+        }
+        Console.WriteLine(logMessage);
     }
 }
