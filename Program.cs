@@ -2,6 +2,7 @@
 using Microsoft.Owin.Hosting;
 using System;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 
 class Program
@@ -19,10 +20,23 @@ class Program
             return;
         }
 
+        // Validate if port is in a safe range
+        if (!int.TryParse(port, out int portNumber) || portNumber < 1024)
+        {
+            LogError($"Port {port} is in the restricted range. Please use a port number above 1024.");
+            return;
+        }
+
         string url = $"http://{serverIP}:{port}";
 
         try
         {
+            // Check if we can create a simple listener first
+            var listener = new HttpListener();
+            listener.Prefixes.Add(url + "/");
+            listener.Start();
+            listener.Stop();
+
             using (WebApp.Start(url))
             {
                 hubContext = GlobalHost.ConnectionManager.GetHubContext<NotificationHub>();
@@ -31,9 +45,14 @@ class Program
                 Console.ReadKey();
             }
         }
+        catch (HttpListenerException ex)
+        {
+            LogError($"Permission error: {ex.Message}. Try running as administrator or using a different port.");
+        }
         catch (Exception ex)
         {
-            LogError($"Error starting the SignalR server: {ex.Message}");
+            var innerException = ex.InnerException?.Message ?? "No inner exception";
+            LogError($"Error starting the SignalR server: {ex.Message}\nInner Exception: {innerException}\nStack Trace: {ex.StackTrace}");
         }
     }
 
