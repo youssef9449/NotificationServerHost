@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 class Program
 {
     static IHubContext hubContext;
-    public static string connectionString = "Data Source=192.168.1.9;Initial Catalog=Users;User ID=sa;Password=123;MultipleActiveResultSets=True;";
-    //public static string connectionString = "Data Source=192.168.1.93;Initial Catalog=Users;Trusted_Connection=True;";
+    //public static string connectionString = "Data Source=192.168.1.9;Initial Catalog=Users;User ID=sa;Password=123;MultipleActiveResultSets=True;";
+    public static string connectionString = "Data Source=192.168.1.89;Initial Catalog=Users;Trusted_Connection=True;";
     //public static string connectionString = "Data Source=192.168.1.11;Initial Catalog=Users;Trusted_Connection=True;";
 
 
